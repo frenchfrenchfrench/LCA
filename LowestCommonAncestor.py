@@ -1,3 +1,4 @@
+#geeksforgeeks.com
 
 class Node:
     def __init__(self, key):
@@ -10,51 +11,48 @@ def findPath( root, path, k):
  
     # Baes Case
     if root is None:
-        return False
+        return None
 
-    path.append(root.key)
 
-    if root.key == k :
-        return True
+    if root.key == path or root.key == k :
+        return root
 
-    if ((root.left != None and findPath(root.left, path, k)) or
-            (root.right!= None and findPath(root.right, path, k))):
-        return True
- 
+    if path == k:
+        return path.key
 
-      
-    path.pop()
-    return False
- 
-
-def findLCA(root, n1, n2):
- 
-
-    path1 = []
-    path2 = []
- 
-
-    if (not findPath(root, path1, n1) or not findPath(root, path2, n2)):
-        return -1
- 
-
+    dag = []
     i = 0
-    while(i < len(path1) and i < len(path2)):
-        if path1[i] != path2[i]:
-            break
-        i += 1
-    return path1[i-1]
+
+    while(i < len(path.pred)):
+        j = 0
+        while(j < len(k.pred)):
+            if(path.pred[i].key == k.pred[j].key):
+                dag.append(path[i].key)
+                j = j + 1
+            else:
+                j = j+1
+        i = i + 1
+    if(dag == []):
+        if(path.key > k.key):
+            dag.append(findPath(root, path.pred[0], k))
+        else:
+            dag.append(findPath(root, path, k.pred[0]))
+
+    return max(dag)
+
 
 root = Node(1)
-root.left = Node(2)
-root.right = Node(3)
-root.left.left = Node(4)
-root.left.right = Node(5)
-root.right.left = Node(6)
-root.right.right = Node(7)
-
- print("Enter one node")
-node1 = input()
-print("Enter one more")
-node2 = input ()
-print "LCA = %d" %(findLCA(root, node1, node2))
+r2 = Node(2)
+r3 = Node(3)
+r4 = Node(4)
+r5 = Node(5)
+r6 = Node(6)
+root.succ = [r2, r3, r4, r5]
+r2.succ = [r4]
+r2.pred = [root]
+r3.succ = [r4, r5]
+r3.pred = [root]
+r4.succ = [r5]
+r4.pred = [r2, r3, root]
+r5.pred = [r3, r4, root]
+r6.pred = [r4]
